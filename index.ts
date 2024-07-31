@@ -1,10 +1,11 @@
 import cors from "cors";
 import dotenv from "dotenv";
 import express, { Application } from "express";
-import { defineRoutes } from "./routes";
-import { connectToMongoDB } from "./utils/db";
 
 dotenv.config();
+
+import { defineRoutes } from "./routes";
+import { connectToMongoDB } from "./utils/db";
 
 const app: Application = express();
 const port = process.env.PORT || 8000;

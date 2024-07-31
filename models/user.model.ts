@@ -1,5 +1,6 @@
-import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import jsonwebtoken from "jsonwebtoken";
+import mongoose from "mongoose";
 import { UserDataProps, userSchema } from "../schemas/user.schema";
 import { UserSchemaValidator } from "../validators/userSchema.dto";
 
@@ -18,6 +19,20 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+userSchema.methods.comparePassword = async function (password: string) {
+  return await bcrypt.compare(password, this.password);
+};
+
+userSchema.methods.generateToken = function () {
+  if (!process.env.SECRET_TOKEN) {
+    throw new Error("SECRET_TOKEN is not defined");
+  }
+
+  return jsonwebtoken.sign({ _id: this._id }, process.env.SECRET_TOKEN, {
+    expiresIn: "30d",
+  });
+};
+
 const UserModel = mongoose.model<UserDataProps>("users", userSchema);
 
-export { UserModel, UserDataProps };
+export { UserDataProps, UserModel };
