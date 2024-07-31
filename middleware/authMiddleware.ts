@@ -1,11 +1,11 @@
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from "express";
 
 const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  const authHeader = req.headers['authorization'];
-  if (authHeader && authHeader === 'your-secret-token') {
-    next(); // Authorization successful, proceed to the next middleware or route handler
+  const authHeader = req.headers["authorization"];
+  if (authHeader && authHeader === process.env.SECRET_TOKEN) {
+    next();
   } else {
-    res.status(403).json({ message: 'Forbidden' });
+    res.status(401).json({ message: "Unauthorized" });
   }
 };
 

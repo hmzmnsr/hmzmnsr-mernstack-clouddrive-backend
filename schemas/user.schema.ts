@@ -1,6 +1,6 @@
 // src/schemas/user.schema.ts
 
-import { Schema } from 'mongoose';
+import { Schema } from "mongoose";
 
 interface UserDataProps {
   _id: object;
@@ -14,10 +14,10 @@ interface UserDataProps {
 
 const userSchema = new Schema<UserDataProps>({
   name: { type: String, required: true },
-  email: { type: String, required: true, unique: true }, // Fix typo from `trpe` to `type`
+  email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   phone: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
 });
 
-export { userSchema, UserDataProps };
+export { UserDataProps, userSchema };

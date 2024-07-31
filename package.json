@@ -4,7 +4,7 @@
   "main": "index.ts",
   "scripts": {
     "build": "npx tsc",
-    "start": "npx tsc && node dist/index.ts",
+    "start": "npx tsc && node dist/index.js",
     "dev": "nodemon -r ts-node/register src/index.ts",
     "test": "npx tsc && jest"
   },
