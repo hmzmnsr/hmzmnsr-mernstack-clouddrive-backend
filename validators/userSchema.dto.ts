@@ -23,4 +23,4 @@ const loginSchemaValidator = Joi.object({
   password: Joi.string().required(),
 });
 
-export { UserSchemaValidator, createUserBodyValidator, loginSchemaValidator };
+export { UserSchemaValidator, createUserBodyValidator, loginSchemaValidator }; 

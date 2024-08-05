@@ -8,7 +8,7 @@ import { defineRoutes } from "./routes";
 import { connectToMongoDB } from "./utils/db";
 
 const app: Application = express();
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 8001;
 
 app.use(express.json());
 app.use(cors());

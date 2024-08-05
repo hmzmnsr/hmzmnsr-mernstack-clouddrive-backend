@@ -25,4 +25,4 @@ const userSchema = new Schema<UserDataProps>({
   updatedAt: { type: Date, default: Date.now },
 });
 
-export { UserDataProps, userSchema };
+export { UserDataProps, userSchema }; 

@@ -35,4 +35,4 @@ userSchema.methods.generateToken = function () {
 
 const UserModel = mongoose.model<UserDataProps>("users", userSchema);
 
-export { UserDataProps, UserModel };
+export { UserDataProps, UserModel }; 

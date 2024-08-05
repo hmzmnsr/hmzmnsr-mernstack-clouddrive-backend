@@ -17,6 +17,11 @@ export const createUser = async (req: Request, res: Response) => {
   try {
     const { name, email, password, phone } = req.body;
 
+    const existingUser = await UserModel.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({ message: "Email already exists" });
+    }
+
     await UserModel.create({
       _id: new mongoose.Types.ObjectId(),
       name,
@@ -56,4 +61,17 @@ export const loginUser = async (req: Request, res: Response) => {
   } catch (err) {
     res.status(400).json({ message: "Bad request" });
   }
-};
+}; 
+
+export const userProfile = async (req: Request, res: Response) => {
+
+  try {
+    const user = await UserModel.find({_id: req.user._id},{_id: 1, name: 1})
+    res.status(200).send(user);
+
+  }
+  catch (err){
+    res.status(404).json({message:"Profile not found"});
+  }
+}
+
