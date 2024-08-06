@@ -40,38 +40,34 @@ export const createUser = async (req: Request, res: Response) => {
 export const loginUser = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
-
     const user = await UserModel.findOne({ email });
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(403).json({ message: "User not found" });
     }
 
     const isPasswordValid = await user.comparePassword(password);
-
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const token = user.generateToken();
-
-    res.status(201).json({
-      token,
+    res.status(200).json({
+      token: user.generateToken(),
     });
   } catch (err) {
-    res.status(400).json({ message: "Bad request" });
+    console.log(err);
+    res.status(500).json({ message: "Bad request" });
   }
-}; 
+};
 
 export const userProfile = async (req: Request, res: Response) => {
-
   try {
-    const user = await UserModel.find({_id: req.user._id},{_id: 1, name: 1})
+    const user = await UserModel.findOne(
+      { _id: req.user._id },
+      { password: 0 }
+    );
     res.status(200).send(user);
-
+  } catch (err) {
+    res.status(404).json({ message: "Profile not found" });
   }
-  catch (err){
-    res.status(404).json({message:"Profile not found"});
-  }
-}
-
+};
