@@ -25,12 +25,12 @@ export const getFileById = async (req: Request, res: Response) => {
 
 export const createFile = async (req: Request, res: Response) => {
   try {
-    const { fileRef, folderPath } = req.body;
+    const { attachmentRef, folderPath } = req.body;
 
     const file = new FileModel({
       _id: new mongoose.Types.ObjectId(),
       userRef: req.user._id,
-      fileRef,
+      attachmentRef,
       folderPath,
     });
     await file.save();

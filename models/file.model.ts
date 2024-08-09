@@ -1,11 +1,10 @@
-import mongoose from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 import fileSchema, { IFile } from "../schemas/file.schema";
 
 fileSchema.pre<IFile>("save", async function (next) {
-  
-  const fileExists = await mongoose.model("File").exists({ _id: this.fileRef });
-  if (!fileExists) {
-    throw new Error("Referenced file does not exist");
+  const attachmentExists = await mongoose.model("File").exists({ _id: this.attachmentRef });
+  if (!attachmentExists) {
+    throw new Error("Referenced attachment does not exist");
   }
   next();
 });

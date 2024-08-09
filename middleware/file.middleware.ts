@@ -6,10 +6,10 @@ export const checkFileReferences = async (req: Request, res: Response, next: Nex
   const FileModel = mongoose.model("File");
   const FolderModel = mongoose.model("Folder");
 
-  const fileExists = await FileModel.exists({ _id: req.body.fileRef });
+  const attachmentExists = await FileModel.exists({ _id: req.body.attachmentRef });
   const folderExists = await FolderModel.exists({ _id: req.body.folderRef });
 
-  if (!fileExists || !folderExists) {
+  if (!attachmentExists || !folderExists) {
     return res.status(400).send("Referenced file or folder does not exist");
   }
 
