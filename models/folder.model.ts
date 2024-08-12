@@ -2,11 +2,10 @@ import mongoose from 'mongoose';
 import folderSchema, { IFolder } from '../schemas/folder.schema';
 
 folderSchema.pre("save", async function (next) {
-  
   const FolderModel = mongoose.model('Folder');
-  const duplicate = await FolderModel.exists({ userRef: this.userRef, path: this.path });
+  const duplicate = await FolderModel.exists({ path: this.path });
   if (duplicate) {
-    throw new Error("Folder already exists for this user at this path");
+    throw new Error("Folder already exists at this path");
   }
   next();
 });

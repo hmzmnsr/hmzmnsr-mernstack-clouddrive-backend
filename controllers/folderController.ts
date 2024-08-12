@@ -25,25 +25,22 @@ export const getFolderById = async (req: Request, res: Response) => {
 
 export const createFolder = async (req: Request, res: Response) => {
   try {
-    const { path } = req.body;
+    const { name, path } = req.body;
 
-    const existingFolder = await FolderModel.findOne({
-      userRef: req.user._id,
-      path,
-    });
+    const existingFolder = await FolderModel.findOne({ path });
     if (existingFolder) {
       return res.status(409).json({ message: "Folder already exists" });
     }
 
-    const folder = new FolderModel({
+    await FolderModel.create({
       _id: new mongoose.Types.ObjectId(),
-      userRef: req.user._id,
       path,
+      name,  
     });
-    await folder.save();
 
     res.status(201).json({ message: "Folder created successfully" });
   } catch (err) {
+    console.log(err);
     res.status(500).json({ message: "Internal server error" });
   }
 };
