@@ -27,15 +27,22 @@ export const createFolder = async (req: Request, res: Response) => {
   try {
     const { name, path } = req.body;
 
-    const existingFolder = await FolderModel.findOne({ path });
-    if (existingFolder) {
-      return res.status(409).json({ message: "Folder already exists" });
-    }
+    // Already being done in the folders.model // Remove this
+    // const existingFolder = await FolderModel.findOne({
+    //   path,
+    //   userRef: req.user._id,
+    // });
 
+    // if (existingFolder) {
+    //   return res.status(409).json({ message: "Folder already exists" });
+    // }
+
+    //Added userRef, else we can't decide to which user this folder belongs to
     await FolderModel.create({
       _id: new mongoose.Types.ObjectId(),
+      userRef: req.user._id,
       path,
-      name,  
+      name,
     });
 
     res.status(201).json({ message: "Folder created successfully" });
@@ -48,9 +55,11 @@ export const createFolder = async (req: Request, res: Response) => {
 export const deleteFolder = async (req: Request, res: Response) => {
   try {
     const folder = await FolderModel.findByIdAndDelete(req.params.id);
+
     if (!folder) {
       return res.status(404).json({ message: "Folder not found" });
     }
+
     res.status(200).json({ message: "Folder deleted successfully" });
   } catch (err) {
     res.status(500).json({ message: "Server error" });
