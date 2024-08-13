@@ -2,7 +2,8 @@ import mongoose from "mongoose";
 import folderSchema, { IFolder } from "../schemas/folder.schema";
 
 folderSchema.pre("save", async function (next) {
-  const FolderModel = mongoose.model("Folder");
+  const FolderModel = mongoose.model("Folders");
+
   const duplicate = await FolderModel.exists({
     path: this.path,
     userRef: this.userRef,
@@ -15,5 +16,5 @@ folderSchema.pre("save", async function (next) {
   next();
 });
 
-const FolderModel = mongoose.model<IFolder>("Folder", folderSchema);
+const FolderModel = mongoose.model<IFolder>("Folders", folderSchema);
 export { FolderModel, IFolder };

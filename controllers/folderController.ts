@@ -4,7 +4,15 @@ import { FolderModel } from "../models/folder.model";
 
 export const getFolders = async (req: Request, res: Response) => {
   try {
-    const folders = await FolderModel.find({ userRef: req.user._id });
+    //Populating Reference Data
+    const folders = await FolderModel.find({ userRef: req.user._id }).populate(
+      "userRef",
+      {
+        _id: 1,
+        name: 1,
+      }
+    );
+
     res.status(200).json(folders);
   } catch (err) {
     res.status(500).json({ message: "Server error" });
@@ -13,7 +21,16 @@ export const getFolders = async (req: Request, res: Response) => {
 
 export const getFolderById = async (req: Request, res: Response) => {
   try {
-    const folder = await FolderModel.findById(req.params.id);
+    //Populating Reference Data
+    // Added UserRef so the user can get only his own folders
+    const folder = await FolderModel.findById({
+      _id: req.params.id,
+      userRef: req.user._id,
+    }).populate("userRef", {
+      _id: 1,
+      name: 1,
+    });
+
     if (!folder) {
       return res.status(404).json({ message: "Folder not found" });
     }
@@ -54,7 +71,11 @@ export const createFolder = async (req: Request, res: Response) => {
 
 export const deleteFolder = async (req: Request, res: Response) => {
   try {
-    const folder = await FolderModel.findByIdAndDelete(req.params.id);
+    //Added userRef, so the user can only delete his own folders
+    const folder = await FolderModel.findByIdAndDelete({
+      _id: req.params.id,
+      userRef: req.user._id,
+    });
 
     if (!folder) {
       return res.status(404).json({ message: "Folder not found" });
