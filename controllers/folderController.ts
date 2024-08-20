@@ -44,17 +44,6 @@ export const createFolder = async (req: Request, res: Response) => {
   try {
     const { name, path } = req.body;
 
-    // Already being done in the folders.model // Remove this
-    // const existingFolder = await FolderModel.findOne({
-    //   path,
-    //   userRef: req.user._id,
-    // });
-
-    // if (existingFolder) {
-    //   return res.status(409).json({ message: "Folder already exists" });
-    // }
-
-    //Added userRef, else we can't decide to which user this folder belongs to
     await FolderModel.create({
       _id: new mongoose.Types.ObjectId(),
       userRef: req.user._id,

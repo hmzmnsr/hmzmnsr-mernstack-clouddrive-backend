@@ -1,20 +1,19 @@
 import express from "express";
 import {
   createFolder,
-  getFolders,
-  getFolderById,
   deleteFolder,
+  getFolderById,
+  getFolders,
 } from "../controllers/folderController";
-import authMiddleware from "../middleware/authMiddleware";
-import { validate } from "../middleware/validationMiddleware"; 
+import { validate } from "../middleware/validationMiddleware";
 import { folderSchemaValidator } from "../validators/folder.dto";
 
 const router = express.Router();
 
 // Routes for Folder
-router.get("/", authMiddleware, getFolders);
-router.get("/:id", authMiddleware, getFolderById);
-router.post("/", authMiddleware, validate(folderSchemaValidator), createFolder);
-router.delete("/:id", authMiddleware, deleteFolder);
+router.get("/", getFolders);
+router.get("/:id", getFolderById);
+router.post("/", validate(folderSchemaValidator), createFolder);
+router.delete("/:id", deleteFolder);
 
 export { router as folderRouter };
