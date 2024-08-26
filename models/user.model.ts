@@ -4,13 +4,16 @@ import mongoose from "mongoose";
 import { UserDataProps, userSchema } from "../schemas/user.schema";
 import { UserSchemaValidator } from "../validators/userSchema.dto";
 
+// Add indexes for optimized querying
 userSchema.index({ _id: 1, email: 1, isActive: 1 });
 
+// Validate schema before saving
 userSchema.pre("validate", async function (next) {
   await UserSchemaValidator.validateAsync(this.toObject());
   next();
 });
 
+// Hash password before saving if it has been modified
 userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
     const hashedPassword = await bcrypt.hash(this.password, 10);
@@ -19,10 +22,12 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+// Method to compare passwords
 userSchema.methods.comparePassword = async function (password: string) {
   return await bcrypt.compare(password, this.password);
 };
 
+// Method to generate JWT token
 userSchema.methods.generateToken = function () {
   if (!process.env.SECRET_TOKEN) {
     throw new Error("SECRET_TOKEN is not defined");
@@ -33,6 +38,7 @@ userSchema.methods.generateToken = function () {
   });
 };
 
+// Create and export the UserModel
 const UserModel = mongoose.model<UserDataProps>("Users", userSchema);
 
 export { UserDataProps, UserModel };
