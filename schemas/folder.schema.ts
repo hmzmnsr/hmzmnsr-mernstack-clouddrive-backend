@@ -1,7 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 
 // Folder Interface
-//Added UserRef
 export interface IFolder extends Document {
   path: string;
   name: string;
@@ -9,7 +8,6 @@ export interface IFolder extends Document {
 }
 
 // Folder Schema
-// Added UserRef
 const folderSchema: Schema<IFolder> = new mongoose.Schema({
   path: { type: String, required: true },
   name: { type: String, required: true },
@@ -18,6 +16,20 @@ const folderSchema: Schema<IFolder> = new mongoose.Schema({
     ref: "Users",
     required: true,
   },
+});
+
+// Pre-save hook to check for duplicate folders
+folderSchema.pre<IFolder>("save", async function (next) {
+  const duplicate = await mongoose.model<IFolder>("Folders").exists({
+    path: this.path,
+    userRef: this.userRef,
+  });
+
+  if (duplicate) {
+    throw new Error("Folder already exists at this path");
+  }
+
+  next();
 });
 
 export default folderSchema;

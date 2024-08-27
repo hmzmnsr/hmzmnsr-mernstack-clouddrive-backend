@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
+import { FolderModel } from "../models/folder.model";
+
 
 // Middleware to check for duplicate folders
 export const checkDuplicateFolder = async (req: Request, res: Response, next: NextFunction) => {
