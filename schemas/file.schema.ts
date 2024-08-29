@@ -6,11 +6,13 @@ export interface IFile extends Document {
   userRef: mongoose.Types.ObjectId;
   folderRef: mongoose.Types.ObjectId; // Ensure folderRef field is added
   folderPath: string;
+  name: string;
   isFavorite: boolean;
 }
 
 // File Schema
 const fileSchema: Schema<IFile> = new mongoose.Schema({
+  name: { type: String, required: true },
   attachmentRef: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Attachment",

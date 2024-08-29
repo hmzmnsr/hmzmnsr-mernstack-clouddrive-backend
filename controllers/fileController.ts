@@ -1,17 +1,16 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 import { FileModel } from "../models/file.model";
+import { FolderModel } from "../models/folder.model";
 
 export const getFiles = async (req: Request, res: Response) => {
   try {
     const files = await FileModel.find({ userRef: req.user._id })
       .populate({
         path: "attachmentRef",
-        select: "attachmentName attachmentType size attachmentPath dateTime",
       })
       .populate({
-        path: "folderRef", // Ensure folderRef is populated
-        select: "name",
+        path: "folderRef",
       });
 
     res.status(200).json(files);
@@ -84,16 +83,21 @@ export const markAsFavorite = async (req: Request, res: Response) => {
 
 export const createFile = async (req: Request, res: Response) => {
   try {
-    const { attachmentRef, folderRef, folderPath } = req.body; // Include folderRef in the request body
+    const { attachmentRef, folderRef, name } = req.body; // Include folderRef in the request body
 
-    const file = new FileModel({
+    const folder = await FolderModel.findById(folderRef);
+    if (!folder) {
+      return res.status(404).json({ message: "Folder not found" });
+    }
+
+    await FileModel.create({
       _id: new mongoose.Types.ObjectId(),
       userRef: req.user._id,
       attachmentRef,
-      folderRef, // Save the folderRef when creating a file
-      folderPath,
+      folderRef,
+      folderPath: folder.path + "/" + name,
+      name,
     });
-    await file.save();
 
     res.status(201).json({ message: "File created successfully" });
   } catch (err) {

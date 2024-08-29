@@ -19,26 +19,27 @@ export const getAttachmentById = async (req: Request, res: Response) => {
     }
     res.status(200).json(attachment);
   } catch (err) {
-    res.status(500).json({ message: "Server error" }); 
+    res.status(500).json({ message: "Server error" });
   }
 };
 
 export const createAttachment = async (req: Request, res: Response) => {
   try {
-    const { attachmentPath, attachmentName, attachmentType, attachmentOwnership, size } = req.body;
+    const { name, type, size } = req.body;
 
-    const attachment = new AttachmentModel({
+    const attachment = await AttachmentModel.create({
       _id: new mongoose.Types.ObjectId(),
-      attachmentPath,
-      attachmentName,
-      attachmentType,
-      attachmentOwnership,
+      path: `${req.user._id}/files/${name}`,
+      name,
+      type,
       userRef: req.user._id,
       size,
     });
-    await attachment.save();
 
-    res.status(201).json({ message: "Attachment created successfully" });
+    res.status(201).json({
+      message: "Attachment created successfully",
+      _id: attachment._id,
+    });
   } catch (err) {
     res.status(500).json({ message: "Internal server error" });
   }

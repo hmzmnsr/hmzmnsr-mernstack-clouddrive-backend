@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose from "mongoose";
 import folderSchema, { IFolder } from "../schemas/folder.schema";
 
 // Create Folder model
