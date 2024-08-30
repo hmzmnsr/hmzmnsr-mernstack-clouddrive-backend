@@ -5,6 +5,7 @@ import {
   getFileById,
   getFiles,
   getFilesByFavorite,
+  getRecentFiles,
   markAsFavorite,
 } from "../controllers/file.controller";
 import { validate } from "../middleware/validation.middleware";
@@ -13,6 +14,7 @@ import { fileSchemaValidator } from "../validators/file.dto";
 const router = express.Router();
 
 // Routes for File
+router.get("/recent", getRecentFiles);
 router.get("/", getFiles);
 router.get("/favorite", getFilesByFavorite);
 router.get("/:id", getFileById);

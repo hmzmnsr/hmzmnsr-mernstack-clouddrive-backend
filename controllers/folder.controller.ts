@@ -4,28 +4,50 @@ import { FileModel } from "../models/file.model";
 import { FolderModel } from "../models/folder.model";
 
 // Don't use map here
+
+export const getAllFolders = async (req: Request, res: Response) => {
+  try {
+    // Fetch folders and populate with user data
+    const folders = await FolderModel.find(
+      { userRef: req.user._id },
+      {
+        _id: 1,
+        name: 1,
+      }
+    ).sort({ _id: -1 });
+
+    res.status(200).json(folders);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const getRecentFolders = async (req: Request, res: Response) => {
+  try {
+    // Fetch folders and populate with user data
+    const folders = await FolderModel.find({ userRef: req.user._id })
+      .populate("userRef", {
+        select: ["_id", "name"],
+      })
+      .limit(5)
+      .sort({ _id: -1 });
+
+    res.status(200).json(folders);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 export const getFolders = async (req: Request, res: Response) => {
   try {
     // Fetch folders and populate with user data
     const folders = await FolderModel.find({ userRef: req.user._id })
-      .populate("userRef", "_id name")
-      .lean();
+      .populate("userRef", {
+        select: ["_id", "name"],
+      })
+      .sort({ _id: -1 });
 
-    // Populate each folder with its associated files
-    const folderPromises = folders.map(async (folder) => {
-      const files = await FileModel.find({ folderPath: folder._id }).populate(
-        "attachmentRef",
-        "attachmentName attachmentType size attachmentPath dateTime"
-      );
-      return {
-        ...folder,
-        files,
-      };
-    });
-
-    const foldersWithFiles = await Promise.all(folderPromises);
-
-    res.status(200).json(foldersWithFiles);
+    res.status(200).json(folders);
   } catch (err) {
     res.status(500).json({ message: "Server error" });
   }
@@ -37,9 +59,9 @@ export const getFolderById = async (req: Request, res: Response) => {
     const folder = await FolderModel.findOne({
       _id: req.params.id,
       userRef: req.user._id,
-    })
-      .populate("userRef", "_id name")
-      .lean();
+    }).populate("userRef", {
+      select: ["_id", "name"],
+    });
 
     if (!folder) {
       return res.status(404).json({ message: "Folder not found" });
@@ -48,7 +70,9 @@ export const getFolderById = async (req: Request, res: Response) => {
     // Populate folder with associated files
     const files = await FileModel.find({ folderPath: folder._id }).populate(
       "attachmentRef",
-      "attachmentName attachmentType size attachmentPath dateTime"
+      {
+        select: ["_id", "name", "path", "type", "size", "createdAt"],
+      }
     );
 
     res.status(200).json({

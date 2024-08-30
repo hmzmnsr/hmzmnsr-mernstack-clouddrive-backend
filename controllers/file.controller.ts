@@ -5,6 +5,39 @@ import { FileModel } from "../models/file.model";
 import { FolderModel } from "../models/folder.model";
 
 // Fetch all files for the authenticated user
+
+export const getRecentFiles = async (req: Request, res: Response) => {
+  try {
+    const files = await FileModel.find({ userRef: req.user._id })
+      .populate({
+        path: "attachmentRef",
+        select: ["_id", "name", "path", "type", "size", "createdAt"],
+      })
+      .populate({
+        path: "folderRef",
+        select: ["_id", "name", "path"],
+      })
+      .limit(5)
+      .sort({ _id: -1 });
+
+    await Promise.all(
+      files.map(async (file: any) => {
+        file.attachmentRef.path = await getPreSignedURL(
+          file.attachmentRef.path,
+          file.attachmentRef.type
+        );
+
+        return file;
+      })
+    );
+
+    res.status(200).json(files);
+  } catch (err) {
+    console.error("Error fetching files:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 export const getFiles = async (req: Request, res: Response) => {
   try {
     const files = await FileModel.find({ userRef: req.user._id })
@@ -16,7 +49,6 @@ export const getFiles = async (req: Request, res: Response) => {
         path: "folderRef",
         select: ["_id", "name", "path"],
       })
-      .limit(10)
       .sort({ _id: -1 });
 
     await Promise.all(
@@ -52,7 +84,6 @@ export const getFilesByFavorite = async (req: Request, res: Response) => {
         path: "folderRef",
         select: ["_id", "name", "path"],
       })
-      .limit(10)
       .sort({ _id: -1 });
 
     res.status(200).json(files);
@@ -65,7 +96,7 @@ export const getFilesByFavorite = async (req: Request, res: Response) => {
 // Fetch a file by its ID
 export const getFileById = async (req: Request, res: Response) => {
   try {
-    const file = await FileModel.findById(req.params.id)
+    const file: any = await FileModel.findById(req.params.id)
       .populate({
         path: "attachmentRef",
         select: ["_id", "name", "path", "type", "size", "createdAt"],
@@ -78,6 +109,11 @@ export const getFileById = async (req: Request, res: Response) => {
     if (!file) {
       return res.status(404).json({ message: "File not found" });
     }
+
+    file.attachmentRef.path = await getPreSignedURL(
+      file.attachmentRef.path,
+      file.attachmentRef.type
+    );
 
     res.status(200).json(file);
   } catch (err) {
