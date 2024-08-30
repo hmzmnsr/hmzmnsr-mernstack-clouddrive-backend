@@ -20,7 +20,7 @@ const folderSchema: Schema<IFolder> = new mongoose.Schema({
 
 // Pre-save hook to check for duplicate folders
 folderSchema.pre<IFolder>("save", async function (next) {
-  const duplicate = await mongoose.model<IFolder>("Folders").exists({
+  const duplicate = await mongoose.model<IFolder>("Folder").exists({
     path: this.path,
     userRef: this.userRef,
   });
