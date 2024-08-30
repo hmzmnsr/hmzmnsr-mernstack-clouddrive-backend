@@ -1,12 +1,13 @@
-import cors from 'cors';
-import dotenv from 'dotenv';
-import express, { Application } from 'express';
+import cors from "cors";
+import dotenv from "dotenv";
+import express, { Application } from "express";
+import path from "path";
 
-dotenv.config();
+const envFile = `.env.${process.env.NODE_ENV}`;
+dotenv.config({ path: path.join(__dirname, envFile) });
 
-import { defineRoutes } from './routes';
-import { connectToMongoDB } from './utils/db';
-import s3Routes from './routes/s3Routes'; // Importing S3 routes
+import { defineRoutes } from "./routes";
+import { connectToMongoDB } from "./utils/db";
 
 const app: Application = express();
 const port = process.env.PORT ?? 8001;
@@ -16,9 +17,6 @@ app.use(cors());
 
 // Define application routes
 defineRoutes(app);
-
-// Add the S3 routes
-app.use('/s3', s3Routes);
 
 app.listen(port, () => {
   console.info(`Server is running at http://localhost:${port}`);

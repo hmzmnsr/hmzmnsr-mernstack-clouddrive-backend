@@ -4,9 +4,9 @@ import {
   deleteAttachment,
   getAttachmentById,
   getAttachments,
-} from "../controllers/attachmentController";
-import authMiddleware from "../middleware/authMiddleware";
-import { validate } from "../middleware/validationMiddleware";
+} from "../controllers/attachment.controller";
+import authMiddleware from "../middleware/auth.middleware";
+import { validate } from "../middleware/validation.middleware";
 import { attachmentSchemaValidator } from "../validators/attachment.dto";
 
 const router = express.Router();

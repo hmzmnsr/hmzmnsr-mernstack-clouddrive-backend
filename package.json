@@ -4,8 +4,8 @@
   "main": "index.ts",
   "scripts": {
     "build": "npx tsc",
-    "start": "npx tsc && node dist/index.js",
-    "dev": "tsc -w & nodemon dist/index.js",
+    "start": "NODE_ENV=local ts-node index.ts",
+    "dev": "NODE_ENV=local npx tsc -w & nodemon dist/index.js",
     "test": "npx tsc && jest"
   },
   "author": "",
@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.637.0",
+    "@aws-sdk/s3-request-presigner": "^3.637.0",
     "@types/aws-sdk": "^2.7.0",
     "aws-sdk": "^2.1682.0",
     "axios": "^1.7.2",

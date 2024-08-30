@@ -1,14 +1,14 @@
 import express from "express";
 import {
+  addFavoriteFile,
   createUser,
   getUsers,
   loginUser,
-  userProfile,
-  addFavoriteFile,
   removeFavoriteFile,
-} from "../controllers/userController";
-import authMiddleware from "../middleware/authMiddleware"; // Adjust path if necessary
-import { validate } from "../middleware/validationMiddleware"; // Adjust path if necessary
+  userProfile,
+} from "../controllers/user.controller";
+import authMiddleware from "../middleware/auth.middleware"; // Adjust path if necessary
+import { validate } from "../middleware/validation.middleware"; // Adjust path if necessary
 import {
   createUserBodyValidator,
   loginSchemaValidator,

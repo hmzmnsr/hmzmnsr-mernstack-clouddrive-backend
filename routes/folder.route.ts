@@ -4,8 +4,8 @@ import {
   deleteFolder,
   getFolderById,
   getFolders,
-} from "../controllers/folderController";
-import { validate } from "../middleware/validationMiddleware";
+} from "../controllers/folder.controller";
+import { validate } from "../middleware/validation.middleware";
 import { folderSchemaValidator } from "../validators/folder.dto";
 
 const router = express.Router();

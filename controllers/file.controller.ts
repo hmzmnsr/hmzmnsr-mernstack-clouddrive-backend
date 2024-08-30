@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
+import { getPreSignedURL } from "../common/s3-client.common";
 import { FileModel } from "../models/file.model";
 import { FolderModel } from "../models/folder.model";
 
@@ -9,10 +10,25 @@ export const getFiles = async (req: Request, res: Response) => {
     const files = await FileModel.find({ userRef: req.user._id })
       .populate({
         path: "attachmentRef",
+        select: ["_id", "name", "path", "type", "size", "createdAt"],
       })
       .populate({
         path: "folderRef",
-      });
+        select: ["_id", "name", "path"],
+      })
+      .limit(10)
+      .sort({ _id: -1 });
+
+    await Promise.all(
+      files.map(async (file: any) => {
+        file.attachmentRef.path = await getPreSignedURL(
+          file.attachmentRef.path,
+          file.attachmentRef.type
+        );
+
+        return file;
+      })
+    );
 
     res.status(200).json(files);
   } catch (err) {
@@ -30,12 +46,14 @@ export const getFilesByFavorite = async (req: Request, res: Response) => {
     })
       .populate({
         path: "attachmentRef",
-        select: "attachmentName attachmentType size attachmentPath dateTime",
+        select: ["_id", "name", "path", "type", "size", "createdAt"],
       })
       .populate({
         path: "folderRef",
-        select: "name",
-      });
+        select: ["_id", "name", "path"],
+      })
+      .limit(10)
+      .sort({ _id: -1 });
 
     res.status(200).json(files);
   } catch (err) {
@@ -50,11 +68,11 @@ export const getFileById = async (req: Request, res: Response) => {
     const file = await FileModel.findById(req.params.id)
       .populate({
         path: "attachmentRef",
-        select: "attachmentName attachmentType size attachmentPath dateTime",
+        select: ["_id", "name", "path", "type", "size", "createdAt"],
       })
       .populate({
         path: "folderRef",
-        select: "name",
+        select: ["_id", "name", "path"],
       });
 
     if (!file) {
@@ -79,7 +97,9 @@ export const markAsFavorite = async (req: Request, res: Response) => {
       { $set: { isFavorite } }
     );
 
-    res.status(200).json({ message: "File favorite status updated successfully" });
+    res
+      .status(200)
+      .json({ message: "File favorite status updated successfully" });
   } catch (err) {
     console.error("Error updating file favorite status:", err);
     res.status(500).json({ message: "Internal server error" });

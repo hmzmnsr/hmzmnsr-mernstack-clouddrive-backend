@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
-import { FolderModel } from "../models/folder.model";
 import { FileModel } from "../models/file.model";
+import { FolderModel } from "../models/folder.model";
 
+// Don't use map here
 export const getFolders = async (req: Request, res: Response) => {
   try {
     // Fetch folders and populate with user data
@@ -18,7 +19,7 @@ export const getFolders = async (req: Request, res: Response) => {
       );
       return {
         ...folder,
-        files
+        files,
       };
     });
 
@@ -52,7 +53,7 @@ export const getFolderById = async (req: Request, res: Response) => {
 
     res.status(200).json({
       ...folder,
-      files
+      files,
     });
   } catch (err) {
     res.status(500).json({ message: "Server error" });

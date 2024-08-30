@@ -3,7 +3,10 @@ import mongoose from "mongoose";
 import { UserModel } from "../models/user.model";
 
 // Get all users
-export const getUsers = async (req: Request, res: Response): Promise<Response> => {
+export const getUsers = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   try {
     const users = await UserModel.find();
     return res.status(200).json(users);
@@ -14,7 +17,10 @@ export const getUsers = async (req: Request, res: Response): Promise<Response> =
 };
 
 // Create a new user
-export const createUser = async (req: Request, res: Response): Promise<Response> => {
+export const createUser = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   try {
     const { name, email, password, phone } = req.body;
 
@@ -41,7 +47,10 @@ export const createUser = async (req: Request, res: Response): Promise<Response>
 };
 
 // Log in a user
-export const loginUser = async (req: Request, res: Response): Promise<Response> => {
+export const loginUser = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   try {
     const { email, password } = req.body;
 
@@ -65,7 +74,10 @@ export const loginUser = async (req: Request, res: Response): Promise<Response> 
 };
 
 // Get user profile
-export const userProfile = async (req: Request, res: Response): Promise<Response> => {
+export const userProfile = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   try {
     const userId = (req as any).user._id;
 
@@ -82,7 +94,10 @@ export const userProfile = async (req: Request, res: Response): Promise<Response
 };
 
 // Add a file to the user's favorites
-export const addFavoriteFile = async (req: Request, res: Response): Promise<Response> => {
+export const addFavoriteFile = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   try {
     const userId = (req as any).user._id;
     const { fileId } = req.body;
@@ -105,7 +120,10 @@ export const addFavoriteFile = async (req: Request, res: Response): Promise<Resp
 };
 
 // Remove a file from the user's favorites
-export const removeFavoriteFile = async (req: Request, res: Response): Promise<Response> => {
+export const removeFavoriteFile = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   try {
     const userId = (req as any).user._id;
     const { fileId } = req.body;

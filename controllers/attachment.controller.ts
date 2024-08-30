@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
+import { putPreSignedURL } from "../common/s3-client.common";
 import { AttachmentModel } from "../models/attachment.model";
 
 export const getAttachments = async (req: Request, res: Response) => {
@@ -36,9 +37,12 @@ export const createAttachment = async (req: Request, res: Response) => {
       size,
     });
 
+    const url = await putPreSignedURL(attachment.path, attachment.type);
+
     res.status(201).json({
       message: "Attachment created successfully",
       _id: attachment._id,
+      url,
     });
   } catch (err) {
     res.status(500).json({ message: "Internal server error" });

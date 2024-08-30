@@ -1,6 +1,15 @@
 import { NextFunction, Response } from "express";
 import jsonwebtoken from "jsonwebtoken";
 import { UserModel } from "../models/user.model";
+import { JWTResponse } from "../utils/types";
+
+declare global {
+  namespace Express {
+    interface Request {
+      user: JWTResponse;
+    }
+  }
+}
 
 const authMiddleware = async (req: any, res: Response, next: NextFunction) => {
   try {

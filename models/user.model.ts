@@ -1,6 +1,6 @@
-import bcrypt from "bcrypt";
 import jsonwebtoken from "jsonwebtoken";
 import mongoose from "mongoose";
+import { bcryptCompare, bcryptHash } from "../common/encryption.common";
 import { UserDataProps, userSchema } from "../schemas/user.schema";
 import { UserSchemaValidator } from "../validators/userSchema.dto";
 
@@ -16,7 +16,7 @@ userSchema.pre("validate", async function (next) {
 // Hash password before saving if it has been modified
 userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
-    const hashedPassword = await bcrypt.hash(this.password, 10);
+    const hashedPassword = await bcryptHash(this.password);
     this.password = hashedPassword;
   }
   next();
@@ -24,7 +24,7 @@ userSchema.pre("save", async function (next) {
 
 // Method to compare passwords
 userSchema.methods.comparePassword = async function (password: string) {
-  return await bcrypt.compare(password, this.password);
+  return await bcryptCompare(password, this.password);
 };
 
 // Method to generate JWT token

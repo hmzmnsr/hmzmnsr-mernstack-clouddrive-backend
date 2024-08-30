@@ -6,8 +6,8 @@ import {
   getFiles,
   getFilesByFavorite,
   markAsFavorite,
-} from "../controllers/fileController";
-import { validate } from "../middleware/validationMiddleware";
+} from "../controllers/file.controller";
+import { validate } from "../middleware/validation.middleware";
 import { fileSchemaValidator } from "../validators/file.dto";
 
 const router = express.Router();
