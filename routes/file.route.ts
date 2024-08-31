@@ -9,7 +9,10 @@ import {
   markAsFavorite,
 } from "../controllers/file.controller";
 import { validate } from "../middleware/validation.middleware";
-import { fileSchemaValidator } from "../validators/file.dto";
+import {
+  favoriteSchemaValidator,
+  fileSchemaValidator,
+} from "../validators/file.dto";
 
 const router = express.Router();
 
@@ -20,6 +23,10 @@ router.get("/favorite", getFilesByFavorite);
 router.get("/:id", getFileById);
 router.post("/", validate(fileSchemaValidator), createFile);
 router.delete("/:id", deleteFile);
-router.patch("/favorite/:id", validate(fileSchemaValidator), markAsFavorite);
+router.patch(
+  "/favorite/:id",
+  validate(favoriteSchemaValidator),
+  markAsFavorite
+);
 
 export { router as fileRouter };

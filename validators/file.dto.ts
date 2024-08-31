@@ -6,4 +6,8 @@ const fileSchemaValidator = Joi.object({
   name: Joi.string().required(),
 });
 
-export { fileSchemaValidator };
+const favoriteSchemaValidator = Joi.object({
+  isFavorite: Joi.boolean().required(),
+});
+
+export { favoriteSchemaValidator, fileSchemaValidator };

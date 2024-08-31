@@ -11,7 +11,15 @@ export const getRecentFiles = async (req: Request, res: Response) => {
     const files = await FileModel.find({ userRef: req.user._id })
       .populate({
         path: "attachmentRef",
-        select: ["_id", "name", "path", "type", "size", "createdAt"],
+        select: [
+          "_id",
+          "name",
+          "path",
+          "type",
+          "size",
+          "createdAt",
+          "isFavorite",
+        ],
       })
       .populate({
         path: "folderRef",
@@ -40,10 +48,32 @@ export const getRecentFiles = async (req: Request, res: Response) => {
 
 export const getFiles = async (req: Request, res: Response) => {
   try {
-    const files = await FileModel.find({ userRef: req.user._id })
+    let query: {
+      userRef: string;
+      folderRef?: string;
+    } = {
+      userRef: req.user._id,
+    };
+
+    if (req.query.folderRef) {
+      query = {
+        ...query,
+        folderRef: String(req.query.folderRef),
+      };
+    }
+
+    const files = await FileModel.find(query)
       .populate({
         path: "attachmentRef",
-        select: ["_id", "name", "path", "type", "size", "createdAt"],
+        select: [
+          "_id",
+          "name",
+          "path",
+          "type",
+          "size",
+          "createdAt",
+          "isFavorite",
+        ],
       })
       .populate({
         path: "folderRef",
@@ -78,7 +108,15 @@ export const getFilesByFavorite = async (req: Request, res: Response) => {
     })
       .populate({
         path: "attachmentRef",
-        select: ["_id", "name", "path", "type", "size", "createdAt"],
+        select: [
+          "_id",
+          "name",
+          "path",
+          "type",
+          "size",
+          "createdAt",
+          "isFavorite",
+        ],
       })
       .populate({
         path: "folderRef",
@@ -99,7 +137,15 @@ export const getFileById = async (req: Request, res: Response) => {
     const file: any = await FileModel.findById(req.params.id)
       .populate({
         path: "attachmentRef",
-        select: ["_id", "name", "path", "type", "size", "createdAt"],
+        select: [
+          "_id",
+          "name",
+          "path",
+          "type",
+          "size",
+          "createdAt",
+          "isFavorite",
+        ],
       })
       .populate({
         path: "folderRef",
