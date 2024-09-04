@@ -38,6 +38,12 @@ userSchema.methods.generateToken = function () {
   });
 };
 
+// Method to update password
+userSchema.methods.updatePassword = async function (newPassword: string): Promise<void> {
+  this.password = newPassword;
+  await this.save(); // This triggers the pre-save middleware to hash the password
+};
+
 // Create and export the UserModel
 const UserModel = mongoose.model<UserDataProps>("Users", userSchema);
 

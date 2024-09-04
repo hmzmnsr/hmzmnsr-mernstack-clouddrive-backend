@@ -1,6 +1,6 @@
 import { Schema, Document } from "mongoose";
 
-interface UserDataProps extends Document {
+export interface UserDataProps extends Document {
   _id: object;
   email: string;
   password: string;
@@ -9,12 +9,13 @@ interface UserDataProps extends Document {
   isActive: boolean;
   createdAt?: Date;
   updatedAt?: Date;
-  favoriteFiles: Array<object>; // Array of file references
+
   comparePassword(password: string): Promise<boolean>;
   generateToken(): string;
+  updatePassword(newPassword: string): Promise<void>;
 }
 
-const userSchema = new Schema<UserDataProps>({
+export const userSchema = new Schema<UserDataProps>({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
@@ -22,7 +23,5 @@ const userSchema = new Schema<UserDataProps>({
   isActive: { type: Boolean, default: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
-  favoriteFiles: [{ type: Schema.Types.ObjectId, ref: 'File' }], // Favorite files field
-});
 
-export { UserDataProps, userSchema };
+});

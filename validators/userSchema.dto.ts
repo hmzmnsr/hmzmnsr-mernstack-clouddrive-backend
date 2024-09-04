@@ -24,3 +24,10 @@ const loginSchemaValidator = Joi.object({
 });
 
 export { UserSchemaValidator, createUserBodyValidator, loginSchemaValidator }; 
+
+const updatePasswordValidator = Joi.object({
+  oldPassword: Joi.string().required(),
+  newPassword: Joi.string().min(6).required(),
+}).options({ allowUnknown: true }); 
+
+export { updatePasswordValidator };

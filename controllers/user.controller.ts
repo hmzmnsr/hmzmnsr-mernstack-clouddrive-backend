@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 import { UserModel } from "../models/user.model";
+import { updatePasswordValidator } from "../validators/userSchema.dto";
+import { bcryptCompare, bcryptHash } from "../common/encryption.common";
 
 // Get all users
 export const getUsers = async (
@@ -93,54 +95,38 @@ export const userProfile = async (
   }
 };
 
-// Add a file to the user's favorites
-export const addFavoriteFile = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
-  try {
-    const userId = (req as any).user._id;
-    const { fileId } = req.body;
 
+
+// Update Password
+export const updatePassword = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+
+    // Validate the filtered data
+    const { error } = updatePasswordValidator.validate({ oldPassword, newPassword });
+    if (error) {
+      return res.status(400).json({ message: error.message });
+    }
+
+    const userId = (req as any).user._id;
     const user = await UserModel.findById(userId);
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: 'User not found' });
     }
 
-    if (!user.favoriteFiles.includes(fileId)) {
-      user.favoriteFiles.push(fileId);
-      await user.save(); // This saves the updated favorite files to the database
+    const isMatch = await bcryptCompare(oldPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Incorrect old password' });
     }
 
-    return res.status(200).json({ message: "File added to favorites" });
+    const encryptedPassword = await bcryptHash(newPassword);
+    await UserModel.updateOne({_id: userId},{
+      password: encryptedPassword
+       })
+
+    return res.status(200).json({ message: 'Password updated successfully' });
   } catch (error) {
-    console.error("Error adding favorite file:", error);
-    return res.status(500).json({ message: "Internal server error" });
-  }
-};
-
-// Remove a file from the user's favorites
-export const removeFavoriteFile = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
-  try {
-    const userId = (req as any).user._id;
-    const { fileId } = req.body;
-
-    const user = await UserModel.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    user.favoriteFiles = user.favoriteFiles.filter(
-      (favoriteFileId) => favoriteFileId.toString() !== fileId
-    );
-    await user.save(); // This saves the updated favorite files to the database
-
-    return res.status(200).json({ message: "File removed from favorites" });
-  } catch (error) {
-    console.error("Error removing favorite file:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    console.error('Error updating password:', error);
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
