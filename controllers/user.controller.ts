@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 import { UserModel } from "../models/user.model";
-import { updatePasswordValidator } from "../validators/userSchema.dto";
+import { updatePasswordValidator, updateUserProfileValidator } from "../validators/userSchema.dto";
 import { bcryptCompare, bcryptHash } from "../common/encryption.common";
 
 // Get all users
@@ -24,7 +24,7 @@ export const createUser = async (
   res: Response
 ): Promise<Response> => {
   try {
-    const { name, email, password, phone } = req.body;
+    const { name, email, password, dateOfBirth ,phone  } = req.body;
 
     const existingUser = await UserModel.findOne({ email });
     if (existingUser) {
@@ -36,8 +36,9 @@ export const createUser = async (
       name,
       email,
       password,
+      dateOfBirth,
       phone,
-    });
+    }); 
 
     await newUser.save();
 
@@ -128,5 +129,48 @@ export const updatePassword = async (req: Request, res: Response): Promise<Respo
   } catch (error) {
     console.error('Error updating password:', error);
     return res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
+export const updateUserProfile = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    // Validate the request body
+    const { error, value } = updateUserProfileValidator.validate(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.message });
+    }
+
+    // Extract the validated data
+    const { name, phone, dateOfBirth } = value;
+
+    // Prepare the data to update
+    const dataToUpdate: any = {};
+    if (name) dataToUpdate.name = name;
+    if (phone) dataToUpdate.phone = phone;
+    if (dateOfBirth) dataToUpdate.dateOfBirth = dateOfBirth;
+
+    console.log("Data to update:", dataToUpdate);
+
+    if (Object.keys(dataToUpdate).length === 0) {
+      return res.status(400).json({ message: "No valid fields to update" });
+    }
+
+    // Get the user ID from the token
+    const userId = (req as any).user._id;
+
+    // Perform the update
+    const updateResult = await UserModel.updateOne({ _id: userId }, { $set: dataToUpdate });
+
+    console.log("Update result:", updateResult);
+
+    if (updateResult.acknowledged && updateResult.matchedCount > 0) {
+      return res.status(200).json({ message: "Profile updated successfully" });
+    } else {
+      return res.status(404).json({ message: "User not found or no changes made" });
+    }
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };

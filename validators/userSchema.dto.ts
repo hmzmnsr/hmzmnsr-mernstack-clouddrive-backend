@@ -5,6 +5,7 @@ const UserSchemaValidator = Joi.object({
   name: Joi.string().required(),
   email: Joi.string().email().required(),
   password: Joi.string().required(),
+  dateOfBirth: Joi.date().required(),
   phone: Joi.string().required(),
   isActive: Joi.boolean(),
   createdAt: Joi.date(),
@@ -15,6 +16,7 @@ const createUserBodyValidator = Joi.object({
   name: Joi.string().required(),
   email: Joi.string().email().required(),
   password: Joi.string().required(),
+  dateOfBirth: Joi.date().required(),
   phone: Joi.string().required(),
 });
 
@@ -30,4 +32,13 @@ const updatePasswordValidator = Joi.object({
   newPassword: Joi.string().min(6).required(),
 }).options({ allowUnknown: true }); 
 
-export { updatePasswordValidator };
+export { updatePasswordValidator }; 
+
+
+const updateUserProfileValidator = Joi.object({
+  name: Joi.string().optional(),
+  phone: Joi.string().optional(),
+  dateOfBirth: Joi.date().optional(),
+}).options({ allowUnknown: true });
+
+export {updateUserProfileValidator};

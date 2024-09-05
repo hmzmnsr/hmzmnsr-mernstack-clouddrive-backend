@@ -12,14 +12,14 @@ userSchema.pre("validate", async function (next) {
   await UserSchemaValidator.validateAsync(this.toObject());
   next();
 });
-
+ 
 // Hash password before saving if it has been modified
 userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
     const hashedPassword = await bcryptHash(this.password);
     this.password = hashedPassword;
   }
-  next();
+  next(); 
 });
 
 // Method to compare passwords
