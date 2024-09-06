@@ -24,6 +24,7 @@ export const createUser = async (
   res: Response
 ): Promise<Response> => {
   try {
+    console.log(req.body);
     const { name, email, password, dateOfBirth ,phone  } = req.body;
 
     const existingUser = await UserModel.findOne({ email });
